@@ -9,13 +9,19 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.bson.Document;
 
 import java.util.Scanner;
 
 public class MongoClientConnection {
     public static void main(String[] args) {
-        String connectionString = "mongodb+srv://mbadamik_db_user:oEzYO7HMfKuf3Oec@shovels-db.efko9im.mongodb.net/?appName=shovels-db";
+        // Read the connection string from .env (or the MONGODB_URI environment variable)
+        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+        String connectionString = dotenv.get("MONGODB_URI");
+        if (connectionString == null || connectionString.isBlank()) {
+            throw new IllegalStateException("MONGODB_URI is not set. Add it to .env or the environment.");
+        }
         String databaseName = "shovels-db";
         String collectionName = "users";
         ServerApi serverApi = ServerApi.builder()
